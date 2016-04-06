@@ -1,0 +1,6 @@
+.bin
+.idea
+vendor
+composer
+!composer.json
+!composer.lock
