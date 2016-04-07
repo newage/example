@@ -47,6 +47,10 @@ class HttpRequest implements RequestInterface
             case self::POST:
                 $variables = $_POST;
                 break;
+            case self::DELETE:
+            case self::PUT:
+                parse_str(file_get_contents('php://input'), $variables);
+                break;
         }
 
         return $variables;

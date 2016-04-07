@@ -39,4 +39,15 @@ class HttpRouteTest extends \PHPUnit_Framework_TestCase
         $returnControllerName = $route->read('/', HttpRequest::GET);
         $this->assertNull($returnControllerName);
     }
+
+    public function testParseRouteVariables()
+    {
+        $expected = ['id' => 5];
+        $_SERVER['REQUEST_URI'] = '/5';
+
+        $route = new HttpRoute();
+        $route->add(HttpRequest::GET, '/:id', 'AbstractRestController');
+        $variables = $route->parseRouteVariables('/:id');
+        $this->assertEquals($expected, $variables);
+    }
 }
