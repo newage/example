@@ -19,7 +19,13 @@ interface RouteInterface
      *
      * @param string     $uri
      * @param bool $method
-     * @return null|string
+     * @return null|RouteMatch
      */
     public function read($uri, $method = false);
+
+    /**
+     * Get id value  from last uri
+     * @return int
+     */
+    public function getRouteId();
 }

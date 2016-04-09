@@ -25,20 +25,25 @@ class RestRouteTest extends \PHPUnit_Framework_TestCase
 
         $route = new RestRoute();
         $route->rest('/', $originControllerName);
-        $returnControllerPath = $route->read('/', HttpRequest::GET);
-        $this->assertEquals('AbstractRestController::getList', $returnControllerPath);
+        $routeMatch = $route->read('/', HttpRequest::GET);
+        $this->assertEquals('AbstractRestController', $routeMatch->getController());
+        $this->assertEquals('getList', $routeMatch->getAction());
 
-        $returnControllerPath = $route->read('/:id', HttpRequest::GET);
-        $this->assertEquals('AbstractRestController::get', $returnControllerPath);
+        $routeMatch = $route->read('/1', HttpRequest::GET);
+        $this->assertEquals('AbstractRestController', $routeMatch->getController());
+        $this->assertEquals('get', $routeMatch->getAction());
 
-        $returnControllerPath = $route->read('/', HttpRequest::POST);
-        $this->assertEquals('AbstractRestController::create', $returnControllerPath);
+        $routeMatch = $route->read('/', HttpRequest::POST);
+        $this->assertEquals('AbstractRestController', $routeMatch->getController());
+        $this->assertEquals('create', $routeMatch->getAction());
 
-        $returnControllerPath = $route->read('/:id', HttpRequest::PUT);
-        $this->assertEquals('AbstractRestController::update', $returnControllerPath);
+        $routeMatch = $route->read('/1', HttpRequest::PUT);
+        $this->assertEquals('AbstractRestController', $routeMatch->getController());
+        $this->assertEquals('update', $routeMatch->getAction());
 
-        $returnControllerPath = $route->read('/:id', HttpRequest::DELETE);
-        $this->assertEquals('AbstractRestController::delete', $returnControllerPath);
+        $routeMatch = $route->read('/1', HttpRequest::DELETE);
+        $this->assertEquals('AbstractRestController', $routeMatch->getController());
+        $this->assertEquals('delete', $routeMatch->getAction());
     }
 
     public function providerForUri()

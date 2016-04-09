@@ -3,13 +3,15 @@
 chdir(dirname(__DIR__));
 require_once 'vendor/autoload.php';
 
-$filename = __DIR__.preg_replace('#(\?.*)$#', '', $_SERVER['REQUEST_URI']);
-if (php_sapi_name() === 'cli-server' && is_file($filename)) {
+if (preg_match('~\/.*\..*$~', $_SERVER['REQUEST_URI'])) {
     return false;
 }
 
 $app = new \Example\Core\Application();
-$route = new \Example\Core\Route\HttpRoute();
-$route->add(\Example\Core\Request\HttpRequest::GET, '/', 'Example\Controller\IndexController::read');
+
+$route = new \Example\Core\Route\RestRoute();
+$route->rest('/', 'Example\Controller\IndexController');
+
 $app->setRoute($route);
 $app->setRequest(new \Example\Core\Request\HttpRequest());
+$app->run();

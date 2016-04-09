@@ -7,7 +7,7 @@ use Example\Core\Exception;
 /**
  * Class implements REST actions
  */
-class AbstractRestController
+class AbstractRestController extends AbstractController
 {
     /**
      * For http method POST

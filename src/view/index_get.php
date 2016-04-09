@@ -1,0 +1,1 @@
+This view template <?= $variable; ?>

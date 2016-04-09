@@ -9,7 +9,7 @@ class HttpRoute implements RouteInterface
 {
     protected $routeMap = [];
 
-    protected $routeVariables = [];
+    protected $routeId;
 
     /**
      * Add route to map
@@ -29,34 +29,71 @@ class HttpRoute implements RouteInterface
     }
 
     /**
-     * Get controller from map of route
-     *
+     * Get controller from route map
      * @param string     $uri
      * @param bool $method
-     * @return null|string
+     * @return null|RouteMatch
      */
     public function read($uri, $method = false)
     {
-        if (isset($this->routeMap[$uri][$method])) {
-            return $this->routeMap[$uri][$method];
+        $route = $this->matchesRoute($uri);
+        if (isset($this->routeMap[$route][$method])) {
+            return $this->makeMatch($this->routeMap[$route][$method]);
         }
         return null;
     }
 
     /**
-     * @param $uri
-     * @return array
+     * Validate controller and action and make an associate array
+     * @param $controllerPath
+     * @return RouteMatch
      */
-    public function parseRouteVariables($uri)
+    protected function makeMatch($controllerPath)
     {
-        $variables = [];
-        $routeParts = explode('/', substr($uri, 1));
-        $uriParts = explode('/', substr($_SERVER['REQUEST_URI'], 1));
-        for ($i = 0; $i <= count($uriParts); $i++) {
-            if (isset($routeParts[$i]) && strstr($routeParts[$i], ':')) {
-                $variables[substr($routeParts[$i], 1)] = $uriParts[$i];
+        $parts = explode('::', $controllerPath);
+        if (count($parts) != 2) {
+            throw new \RuntimeException('Incorrect path to controller::action');
+        }
+        $routeMatch = new RouteMatch();
+        $routeMatch->setController($parts[0]);
+        $routeMatch->setAction($parts[1]);
+        return $routeMatch;
+    }
+
+    /**
+     * Match a real uri with registered routes
+     * @param string $uri
+     * @return bool|string
+     */
+    protected function matchesRoute($uri)
+    {
+        foreach ($this->routeMap as $route => $options) {
+            if ($route == $uri) {
+                return $route;
+            }
+            $pattern = str_replace(':id', '([\d]+)', $route);
+            preg_match('~'.$pattern.'~', $uri, $matches);
+            if (isset($matches[1])) {
+                $this->setRouteId($matches[1]);
+                return $route;
             }
         }
-        return $variables;
+        return false;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRouteId()
+    {
+        return $this->routeId;
+    }
+
+    /**
+     * @param mixed $routeId
+     */
+    protected function setRouteId($routeId)
+    {
+        $this->routeId = $routeId;
     }
 }
