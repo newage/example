@@ -15,7 +15,7 @@ class AbstractRestController extends AbstractController
      * @param array $data
      * @throws Exception\ControllerException
      */
-    public function create($data)
+    public function create(array $data)
     {
         throw new Exception\ControllerException('Method `create` do not implements');
     }
@@ -44,11 +44,11 @@ class AbstractRestController extends AbstractController
     /**
      * Update one record for method PUT
      *
+     * @param int   $id
      * @param array $data
-     * @param int $id
      * @throws Exception\ControllerException
      */
-    public function update($data, $id)
+    public function update($id, array $data)
     {
         throw new Exception\ControllerException('Method `update` do not implements');
     }

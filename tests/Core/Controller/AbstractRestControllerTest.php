@@ -45,7 +45,7 @@ class AbstractRestControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function testUpdate()
     {
-        $this->controller->update(array(), 0);
+        $this->controller->update(0, array());
     }
 
     /**

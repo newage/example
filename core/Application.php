@@ -9,6 +9,7 @@ use Example\Core\Request\RequestInterface;
 use Example\Core\Route\RestRoute;
 use Example\Core\Route\RouteInterface;
 use Example\Core\Route\RouteMatch;
+use Example\Core\View\AbstractView;
 
 class Application
 {
@@ -22,6 +23,9 @@ class Application
      */
     protected $request = null;
 
+    /**
+     * Run application
+     */
     public function run()
     {
         $uri = $this->getRequest()->getCurrentUri();
@@ -67,9 +71,8 @@ class Application
      * Set variables to the REST actions
      *
      * @param AbstractController|AbstractRestController $controller
-     * @param                                           $actionName
-     *
-     * @return mixed
+     * @param string                                    $actionName
+     * @return AbstractView
      */
     protected function setParametersToAction(AbstractController $controller, $actionName)
     {

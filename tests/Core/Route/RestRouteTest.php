@@ -13,7 +13,7 @@ class RestRouteTest extends \PHPUnit_Framework_TestCase
      */
     protected static function getMethod($name)
     {
-        $class = new \ReflectionClass('Example\Core\Route\RestRoute');
+        $class = new \ReflectionClass(RestRoute::class);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
         return $method;

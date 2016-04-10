@@ -13,7 +13,7 @@ class HttpRouteTest extends \PHPUnit_Framework_TestCase
      */
     protected static function getMethod($name)
     {
-        $class = new \ReflectionClass('Example\Core\Route\HttpRoute');
+        $class = new \ReflectionClass(HttpRoute::class);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
         return $method;

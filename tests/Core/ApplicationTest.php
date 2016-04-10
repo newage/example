@@ -27,7 +27,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
      */
     protected static function getMethod($name)
     {
-        $class = new \ReflectionClass('Example\Core\Application');
+        $class = new \ReflectionClass(Application::class);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
         return $method;
@@ -62,12 +62,22 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($originalRequest, $returnRequest);
     }
 
+    public function testGetEmptyRequest()
+    {
+        $originalRequest = new HttpRequest();
+
+        $application = new Application();
+        $returnRequest = $application->getRequest();
+        $this->assertEquals($originalRequest, $returnRequest);
+    }
+
+
     public function testCallController()
     {
         $routeMatch = new RouteMatch();
-        $routeMatch->setController('Example\Core\Controller\AbstractRestController');
+        $routeMatch->setController(AbstractRestController::class);
         $routeMatch->setAction('getList');
-        $applicationMock = $this->getMockBuilder('Example\Core\Application')
+        $applicationMock = $this->getMockBuilder(Application::class)
             ->setMethods(['setParametersToAction', 'getRequest'])
             ->getMock();
         $applicationMock->method('setParametersToAction')
@@ -86,9 +96,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testIncorrectCallController()
     {
         $routeMatch = new RouteMatch();
-        $routeMatch->setController('Example\Test\Core\ApplicationTest');
+        $routeMatch->setController(ApplicationTest::class);
         $routeMatch->setAction('get');
-        $applicationMock = $this->getMockBuilder('Example\Core\Application')
+        $applicationMock = $this->getMockBuilder(Application::class)
             ->setMethods(['setParametersToAction'])
             ->getMock();
         $applicationMock->method('setParametersToAction')
@@ -103,7 +113,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetParametersForDelete()
     {
-        $routeMock = $this->getMockBuilder('Example\Core\Route\HttpRoute')
+        $routeMock = $this->getMockBuilder(HttpRoute::class)
             ->setMethods(['getRouteId'])
             ->getMock();
         $routeMock->method('getRouteId')
@@ -120,12 +130,21 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetParametersForCreate()
     {
-        $routeMock = $this->getMockBuilder('Example\Core\Route\HttpRoute')
+        $routeMock = $this->getMockBuilder(HttpRoute::class)
             ->setMethods(['getRouteId'])
             ->getMock();
         $routeMock->method('getRouteId')
             ->will($this->returnValue(1));
+
+        $requestMock = $this->getMockBuilder(HttpRequest::class)
+            ->setMethods(['getCurrentMethod'])
+            ->getMock();
+        $requestMock->method('getCurrentMethod')
+            ->will($this->returnValue(HttpRequest::POST));
+
         $this->application->setRoute($routeMock);
+        $this->application->setRequest($requestMock);
+
         $controller = new AbstractRestController();
 
         $method = self::getMethod('setParametersToAction');
@@ -137,12 +156,12 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetParametersForUpdate()
     {
-        $routeMock = $this->getMockBuilder('Example\Core\Route\HttpRoute')
+        $routeMock = $this->getMockBuilder(HttpRoute::class)
             ->setMethods(['getRouteId'])
             ->getMock();
         $routeMock->method('getRouteId')
             ->will($this->returnValue(1));
-        $requestMock = $this->getMockBuilder('Example\Core\Request\HttpRequest')
+        $requestMock = $this->getMockBuilder(HttpRequest::class)
             ->setMethods(['getVariables'])
             ->getMock();
         $requestMock->method('getVariables')
