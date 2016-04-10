@@ -22,7 +22,7 @@ class IndexControllerTest extends AbstractTest
     public function testCreate()
     {
         $file = 'tests/data/test.csv';
-        unlink($file);
+        @unlink($file);
         $storage = new CsvFileStorage();
         $storage->setOptions(['file' => $file]);
         $model = new IndexModel($storage);
