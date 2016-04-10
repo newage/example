@@ -3,17 +3,18 @@
 namespace Example\Controller;
 
 use Example\Core\Controller\AbstractRestController;
+use Example\Core\View\JsonView;
 
 class IndexController extends AbstractRestController
 {
 
     public function getList()
     {
-        return ['ok'];
+        return new JsonView(['variable' => 'ok']);
     }
 
     public function get()
     {
-        return ['variable' => 'test'];
+        return new JsonView(['variable' => 'test']);
     }
 }

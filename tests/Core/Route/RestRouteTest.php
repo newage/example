@@ -24,7 +24,7 @@ class RestRouteTest extends \PHPUnit_Framework_TestCase
         $originControllerName = 'AbstractRestController';
 
         $route = new RestRoute();
-        $route->rest('/', $originControllerName);
+        $route->add(null, '/', $originControllerName);
         $routeMatch = $route->read('/', HttpRequest::GET);
         $this->assertEquals('AbstractRestController', $routeMatch->getController());
         $this->assertEquals('getList', $routeMatch->getAction());

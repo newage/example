@@ -4,6 +4,7 @@ namespace Example\Core;
 
 use Example\Core\Controller\AbstractController;
 use Example\Core\Controller\AbstractRestController;
+use Example\Core\Request\HttpRequest;
 use Example\Core\Request\RequestInterface;
 use Example\Core\Route\RestRoute;
 use Example\Core\Route\RouteInterface;
@@ -26,42 +27,20 @@ class Application
         $uri = $this->getRequest()->getCurrentUri();
         $method = $this->getRequest()->getCurrentMethod();
         $routeMatch = $this->getRoute()->read($uri, $method);
-        $viewVariables = $this->callController($routeMatch);
-        $this->renderView(
-            $this->createViewPath('IndexController', 'get'),
-            $viewVariables
-        );
+        $viewModel = $this->callController($routeMatch);
+        echo $viewModel;
     }
 
     /**
-     * Create path to view file
-     * @param $controller
-     * @param $action
-     * @return mixed
+     * Add route to Route object
+     * @param null|string $method
+     * @param string $url
+     * @param string $controller
+     * @param bool $force
      */
-    protected function createViewPath($controller, $action)
+    public function route($method, $url, $controller, $force = false)
     {
-        $viewPath = sprintf(
-            'src/view/%s_%s.php',
-            strtolower(substr($controller, 0, -10)),
-            strtolower($action)
-        );
-        return $viewPath;
-    }
-
-    /**
-     * Render view
-     * @param string $pathToView
-     * @param array  $variables
-     */
-    protected function renderView($pathToView, array $variables)
-    {
-        if (!file_exists($pathToView)) {
-            throw new \RuntimeException('A view file not exists. Please create a file: '.$pathToView);
-        }
-
-        extract($variables);
-        require $pathToView;
+        $this->getRoute()->add($method, $url, $controller, $force);
     }
 
     /**
@@ -119,7 +98,7 @@ class Application
     public function getRoute()
     {
         if ($this->route === null) {
-            throw new \RuntimeException('Need setup ROUTE before call ->run()');
+            $this->route = new RestRoute();
         }
         return $this->route;
     }
@@ -141,7 +120,7 @@ class Application
     public function getRequest()
     {
         if ($this->request === null) {
-            throw new \RuntimeException('Need setup REQUEST before call ->run()');
+            $this->request = new HttpRequest();
         }
         return $this->request;
     }

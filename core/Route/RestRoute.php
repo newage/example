@@ -14,18 +14,21 @@ class RestRoute extends HttpRoute
 
     /**
      * Set REST actions to controller
-     * @param $requestUri
-     * @param $controllerName
+     *
+     * @param string $method
+     * @param string $requestUri
+     * @param string $controller
+     * @param bool   $force
      */
-    public function rest($requestUri, $controllerName)
+    public function add($method, $requestUri, $controller, $force = false)
     {
         $uriWithId = $this->addIdToUri($requestUri);
         
-        $this->add(HttpRequest::GET, $requestUri, $this->addActionToController($controllerName, self::ACTION_GET_LIST));
-        $this->add(HttpRequest::GET, $uriWithId, $this->addActionToController($controllerName, self::ACTION_GET));
-        $this->add(HttpRequest::POST, $requestUri, $this->addActionToController($controllerName, self::ACTION_CREATE));
-        $this->add(HttpRequest::PUT, $uriWithId, $this->addActionToController($controllerName, self::ACTION_UPDATE));
-        $this->add(HttpRequest::DELETE, $uriWithId, $this->addActionToController($controllerName, self::ACTION_DELETE));
+        parent::add(HttpRequest::GET, $requestUri, $this->addActionToController($controller, self::ACTION_GET_LIST));
+        parent::add(HttpRequest::GET, $uriWithId, $this->addActionToController($controller, self::ACTION_GET));
+        parent::add(HttpRequest::POST, $requestUri, $this->addActionToController($controller, self::ACTION_CREATE));
+        parent::add(HttpRequest::PUT, $uriWithId, $this->addActionToController($controller, self::ACTION_UPDATE));
+        parent::add(HttpRequest::DELETE, $uriWithId, $this->addActionToController($controller, self::ACTION_DELETE));
     }
 
     /**

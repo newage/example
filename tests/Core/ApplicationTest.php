@@ -42,13 +42,15 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($originalRoute, $returnRoute);
     }
 
-    /**
-     * @expectedException \RuntimeException
-     */
-    public function testGetRouteException()
+    public function testRoute()
     {
+        $originalRoute = new RestRoute();
+        $originalRoute->add(HttpRequest::GET, '/', 'IndexController');
+
         $application = new Application();
-        $application->getRoute();
+        $application->route(null, '/', 'IndexController');
+        $returnRoute = $application->getRoute();
+        $this->assertEquals($originalRoute, $returnRoute);
     }
 
     public function testGetRequest()
@@ -58,15 +60,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $application->setRequest($originalRequest);
         $returnRequest = $application->getRequest();
         $this->assertEquals($originalRequest, $returnRequest);
-    }
-
-    /**
-     * @expectedException \RuntimeException
-     */
-    public function testGetRequestException()
-    {
-        $application = new Application();
-        $application->getRequest();
     }
 
     public function testCallController()
@@ -103,32 +96,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $method = self::getMethod('callController');
         $method->invoke($applicationMock, $routeMatch);
-    }
-
-    public function testRenderView()
-    {
-        $method = self::getMethod('renderView');
-        ob_start();
-        $method->invoke($this->application, 'tests/data/test_view.php', ['testVariable' => 5]);
-        $result = ob_get_contents();
-        ob_end_clean();
-        $this->assertEquals(5, $result);
-    }
-
-    /**
-     * @expectedException \RuntimeException
-     */
-    public function testRenderException()
-    {
-        $method = self::getMethod('renderView');
-        $method->invoke($this->application, 'test', ['testVariable' => 5]);
-    }
-
-    public function testCreateViewPath()
-    {
-        $method = self::getMethod('createViewPath');
-        $result = $method->invoke($this->application, 'IndexController', 'index');
-        $this->assertEquals('src/view/index_index.php', $result);
     }
 
     /**
