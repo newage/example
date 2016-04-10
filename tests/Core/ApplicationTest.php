@@ -130,21 +130,14 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetParametersForCreate()
     {
-        $routeMock = $this->getMockBuilder(HttpRoute::class)
-            ->setMethods(['getRouteId'])
-            ->getMock();
-        $routeMock->method('getRouteId')
-            ->will($this->returnValue(1));
-
         $requestMock = $this->getMockBuilder(HttpRequest::class)
             ->setMethods(['getCurrentMethod'])
             ->getMock();
         $requestMock->method('getCurrentMethod')
             ->will($this->returnValue(HttpRequest::POST));
 
-        $this->application->setRoute($routeMock);
+        $_SERVER['CONTENT_TYPE'] = 'application/form-data';
         $this->application->setRequest($requestMock);
-
         $controller = new AbstractRestController();
 
         $method = self::getMethod('setParametersToAction');

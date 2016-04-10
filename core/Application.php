@@ -56,7 +56,7 @@ class Application
     {
         /* @var $controller AbstractRestController */
         $controllerName = $routeMatch->getController();
-        $controller = new $controllerName;
+        $controller = new $controllerName();
         if (!$controller instanceof AbstractController) {
             throw new \RuntimeException('Controller must be extends `AbstractController`');
         }

@@ -45,11 +45,21 @@ class HttpRequest implements RequestInterface
                 $variables = $_GET;
                 break;
             case self::POST:
-                $variables = $_POST;
+                if ($_SERVER['CONTENT_TYPE'] == 'application/json') {
+                    $content = file_get_contents('php://input');
+                    $variables = (array)json_decode($content);
+                } else {
+                    $variables = $_POST;
+                }
                 break;
             case self::DELETE:
             case self::PUT:
-                parse_str(file_get_contents('php://input'), $variables);
+                $content = file_get_contents('php://input');
+                if ($_SERVER['CONTENT_TYPE'] == 'application/json') {
+                    $variables = (array)json_decode($content);
+                } else {
+                    parse_str($content, $variables);
+                }
                 break;
         }
 

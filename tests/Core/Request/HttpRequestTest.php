@@ -57,6 +57,7 @@ class HttpRequestTest extends \PHPUnit_Framework_TestCase
     public function testGetVariablesFromPost()
     {
         $_SERVER['REQUEST_METHOD'] = HttpRequest::POST;
+        $_SERVER['CONTENT_TYPE'] = 'application/form-data';
         $originalVariables = ['key' => 'value'];
         $_POST = $originalVariables;
 
