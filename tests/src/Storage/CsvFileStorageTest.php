@@ -10,8 +10,7 @@ class CsvFileStorageTest extends AbstractTest
     public function testGetOptions()
     {
         $options = ['file' => 'file'];
-        $storage = new CsvFileStorage();
-        $storage->setOptions($options);
+        $storage = new CsvFileStorage($options);
         $return = $storage->getOptions();
         $this->assertEquals($options, $return);
     }
@@ -19,7 +18,7 @@ class CsvFileStorageTest extends AbstractTest
     public function testGetOption()
     {
         $options = ['file' => 'file'];
-        $storage = new CsvFileStorage();
+        $storage = new CsvFileStorage($options);
         $storage->setOptions($options);
         $return = $storage->getOption('file');
         $this->assertEquals($options['file'], $return);
@@ -30,14 +29,13 @@ class CsvFileStorageTest extends AbstractTest
      */
     public function testGetOptionException()
     {
-        $storage = new CsvFileStorage();
+        $storage = new CsvFileStorage([]);
         $storage->getOption('file');
     }
 
     public function testGetByIdEmpty()
     {
-        $storage = new CsvFileStorage();
-        $storage->setOptions(['file' => 'tests/data/test.csv']);
+        $storage = new CsvFileStorage(['file' => 'tests/data/test.csv']);
         $result = $storage->getById(100);
         $this->assertEquals([], $result);
     }
@@ -49,8 +47,7 @@ class CsvFileStorageTest extends AbstractTest
             ['Piotr', '066666', 'Petrovskogo str.']
         ];
         $options = ['file' => 'tests/data/example.csv'];
-        $storage = new CsvFileStorage();
-        $storage->setOptions($options);
+        $storage = new CsvFileStorage($options);
         $returnRows = $this->readFile($storage);
         $this->assertEquals($originalRows, $returnRows);
     }
@@ -69,8 +66,7 @@ class CsvFileStorageTest extends AbstractTest
             ['Test', '066666', 'Petrovskogo str.']
         ];
         $options = ['file' => 'tests/data/test.csv'];
-        $storage = new CsvFileStorage();
-        $storage->setOptions($options);
+        $storage = new CsvFileStorage($options);
         $method = parent::getMethod(CsvFileStorage::class, 'writeRows');
         $return = $method->invoke($storage, $originalRows);
         $this->assertTrue($return);

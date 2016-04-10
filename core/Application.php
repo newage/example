@@ -4,6 +4,7 @@ namespace Example\Core;
 
 use Example\Core\Controller\AbstractController;
 use Example\Core\Controller\AbstractRestController;
+use Example\Core\Di\DI;
 use Example\Core\Request\HttpRequest;
 use Example\Core\Request\RequestInterface;
 use Example\Core\Route\RestRoute;
@@ -24,19 +25,29 @@ class Application
     protected $request = null;
 
     /**
-     * Run application
+     * @var array
      */
-    public function run()
+    protected $config;
+
+    /**
+     * Run application
+     *
+     * @param $configFilePath
+     */
+    public function run($configFilePath)
     {
-        $uri = $this->getRequest()->getCurrentUri();
-        $method = $this->getRequest()->getCurrentMethod();
-        $routeMatch = $this->getRoute()->read($uri, $method);
+        $this->readConfig($configFilePath);
+        $routeMatch = $this->getRoute()->read(
+            $this->getRequest()->getCurrentUri(),
+            $this->getRequest()->getCurrentMethod()
+        );
         $viewModel = $this->callController($routeMatch);
         echo $viewModel;
     }
 
     /**
      * Add route to Route object
+     *
      * @param null|string $method
      * @param string $url
      * @param string $controller
@@ -49,6 +60,7 @@ class Application
 
     /**
      * Call controller and action
+     *
      * @param $routeMatch
      * @return mixed
      */
@@ -56,7 +68,7 @@ class Application
     {
         /* @var $controller AbstractRestController */
         $controllerName = $routeMatch->getController();
-        $controller = new $controllerName();
+        $controller = $this->callDi($controllerName);
         if (!$controller instanceof AbstractController) {
             throw new \RuntimeException('Controller must be extends `AbstractController`');
         }
@@ -65,6 +77,40 @@ class Application
         $result = $this->setParametersToAction($controller, $routeMatch->getAction());
 
         return $result;
+    }
+
+    /**
+     * @param string $controllerName
+     *
+     * @return object
+     */
+    protected function callDi($controllerName)
+    {
+        $di = new DI($this->getConfig('di'));
+        return $di->get($controllerName);
+    }
+
+    /**
+     * Get config element
+     *
+     * @param $configKey
+     * @return array
+     */
+    protected function getConfig($configKey)
+    {
+        if (isset($this->config[$configKey])) {
+            return $this->config[$configKey];
+        }
+        throw new \RuntimeException('Config element dos not found for key ' . $configKey);
+    }
+
+    /**
+     * Read config from config file
+     * @param string $configFilePath
+     */
+    protected function readConfig($configFilePath)
+    {
+        $this->config = require $configFilePath;
     }
 
     /**

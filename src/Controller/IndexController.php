@@ -4,8 +4,8 @@ namespace Example\Controller;
 
 use Example\Core\Controller\AbstractRestController;
 use Example\Core\View\JsonView;
+use Example\Model\AbstractModel;
 use Example\Model\IndexModel;
-use Example\Storage\CsvFileStorage;
 
 class IndexController extends AbstractRestController
 {
@@ -13,6 +13,11 @@ class IndexController extends AbstractRestController
      * @var IndexModel
      */
     protected $model;
+
+    public function __construct(AbstractModel $model)
+    {
+        $this->model = $model;
+    }
 
     /**
      * Get list of entry
@@ -80,11 +85,6 @@ class IndexController extends AbstractRestController
      */
     protected function getModel()
     {
-        if (null === $this->model) {
-            $storage = new CsvFileStorage();
-            $storage->setOptions(['file' => 'data/example.csv']);
-            $this->model = new IndexModel($storage);
-        }
         return $this->model;
     }
 }

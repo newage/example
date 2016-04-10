@@ -9,6 +9,11 @@ class AbstractStorage
      */
     protected $options;
 
+    public function __construct(array $options)
+    {
+        $this->setOptions($options);
+    }
+
     /**
      * Get options
      *

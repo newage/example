@@ -8,8 +8,9 @@ use Example\Core\Request\HttpRequest;
 use Example\Core\Route\HttpRoute;
 use Example\Core\Route\RestRoute;
 use Example\Core\Route\RouteMatch;
+use Example\Core\Test\AbstractTest;
 
-class ApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends AbstractTest
 {
     /**
      * @var Application
@@ -19,18 +20,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->application = new Application();
-    }
-
-    /**
-     * @param $name
-     * @return \ReflectionMethod
-     */
-    protected static function getMethod($name)
-    {
-        $class = new \ReflectionClass(Application::class);
-        $method = $class->getMethod($name);
-        $method->setAccessible(true);
-        return $method;
     }
 
     public function testGetRoute()
@@ -78,14 +67,16 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $routeMatch->setController(AbstractRestController::class);
         $routeMatch->setAction('getList');
         $applicationMock = $this->getMockBuilder(Application::class)
-            ->setMethods(['setParametersToAction', 'getRequest'])
+            ->setMethods(['setParametersToAction', 'getRequest', 'callDi'])
             ->getMock();
         $applicationMock->method('setParametersToAction')
             ->will($this->returnValue(true));
         $applicationMock->method('getRequest')
             ->will($this->returnValue(new HttpRequest()));
+        $applicationMock->method('callDi')
+            ->will($this->returnValue(new AbstractRestController()));
 
-        $method = self::getMethod('callController');
+        $method = parent::getMethod(Application::class, 'callController');
         $result = $method->invoke($applicationMock, $routeMatch);
         $this->assertTrue($result);
     }
@@ -99,12 +90,12 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $routeMatch->setController(ApplicationTest::class);
         $routeMatch->setAction('get');
         $applicationMock = $this->getMockBuilder(Application::class)
-            ->setMethods(['setParametersToAction'])
+            ->setMethods(['callDi'])
             ->getMock();
-        $applicationMock->method('setParametersToAction')
-            ->will($this->returnValue(true));
+        $applicationMock->method('callDi')
+            ->will($this->returnValue(new ApplicationTest()));
 
-        $method = self::getMethod('callController');
+        $method = parent::getMethod(Application::class, 'callController');
         $method->invoke($applicationMock, $routeMatch);
     }
 
@@ -121,7 +112,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->application->setRoute($routeMock);
         $controller = new AbstractRestController();
 
-        $method = self::getMethod('setParametersToAction');
+        $method = parent::getMethod(Application::class, 'setParametersToAction');
         $method->invoke($this->application, $controller, RestRoute::ACTION_DELETE);
     }
 
@@ -140,7 +131,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->application->setRequest($requestMock);
         $controller = new AbstractRestController();
 
-        $method = self::getMethod('setParametersToAction');
+        $method = parent::getMethod(Application::class, 'setParametersToAction');
         $method->invoke($this->application, $controller, RestRoute::ACTION_CREATE);
     }
 
@@ -163,7 +154,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
         $this->application->setRequest($requestMock);
         $controller = new AbstractRestController();
 
-        $method = self::getMethod('setParametersToAction');
+        $method = parent::getMethod(Application::class, 'setParametersToAction');
         $method->invoke($this->application, $controller, RestRoute::ACTION_UPDATE);
     }
 
@@ -173,7 +164,46 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
     public function testSetParameters()
     {
         $controller = new AbstractRestController();
-        $method = self::getMethod('setParametersToAction');
+        $method = parent::getMethod(Application::class, 'setParametersToAction');
         $method->invoke($this->application, $controller, RestRoute::ACTION_GET_LIST);
+    }
+
+    public function testReadConfig()
+    {
+        $configFile = 'tests/data/config.php';
+        $application = new Application();
+        $method = parent::getMethod(Application::class, 'readConfig');
+        $method->invoke($application, $configFile);
+
+        $getMethod = parent::getProperty(Application::class, 'config');
+        $returnConfig = $getMethod->getValue($application);
+        $expectedConfig = require $configFile;
+        $this->assertEquals($expectedConfig, $returnConfig);
+    }
+
+    public function testGetConfigElement()
+    {
+        $application = new Application();
+        $property = parent::getProperty(Application::class, 'config');
+        $property->setValue($application, ['di' => 'test']);
+
+        $method = parent::getMethod(Application::class, 'getConfig');
+        $returnConfig = $method->invoke($application, 'di');
+        $this->assertEquals('test', $returnConfig);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testGetConfigElementException()
+    {
+        $application = new Application();
+        $method = parent::getMethod(Application::class, 'getConfig');
+        $method->invoke($application, 'di');
+    }
+    
+    public function testCallDi()
+    {
+        
     }
 }

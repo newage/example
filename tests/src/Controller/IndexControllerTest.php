@@ -11,8 +11,10 @@ class IndexControllerTest extends AbstractTest
 {
     public function testGetModel()
     {
+        $storage = new CsvFileStorage(['file' => '']);
+        $model = new IndexModel($storage);
         $method = parent::getMethod(IndexController::class, 'getModel');
-        $return = $method->invoke(new IndexController());
+        $return = $method->invoke(new IndexController($model));
         $this->assertTrue($return instanceof IndexModel);
     }
 
@@ -23,16 +25,9 @@ class IndexControllerTest extends AbstractTest
     {
         $file = 'tests/data/test.csv';
         @unlink($file);
-        $storage = new CsvFileStorage();
-        $storage->setOptions(['file' => $file]);
+        $storage = new CsvFileStorage(['file' => $file]);
         $model = new IndexModel($storage);
-
-        /* @var $controller IndexController|\PHPUnit_Framework_MockObject_MockObject */
-        $controller = $this->getMockBuilder(IndexController::class)
-            ->setMethods(['getModel'])
-            ->getMock();
-        $controller->method('getModel')
-            ->will($this->returnValue($model));
+        $controller = new IndexController($model);
 
         $forCreate = ['Lisa', '998885511', 'Unknown str.'];
         $view = $controller->create($forCreate);
@@ -49,16 +44,9 @@ class IndexControllerTest extends AbstractTest
      */
     public function testUpdate()
     {
-        $storage = new CsvFileStorage();
-        $storage->setOptions(['file' => 'tests/data/test.csv']);
+        $storage = new CsvFileStorage(['file' => 'tests/data/test.csv']);
         $model = new IndexModel($storage);
-
-        /* @var $controller IndexController|\PHPUnit_Framework_MockObject_MockObject */
-        $controller = $this->getMockBuilder(IndexController::class)
-            ->setMethods(['getModel'])
-            ->getMock();
-        $controller->method('getModel')
-            ->will($this->returnValue($model));
+        $controller = new IndexController($model);
 
         $forUpdate = ['Michal', '00000000', 'Kirova str.'];
         $view = $controller->update(1, $forUpdate);
@@ -78,16 +66,9 @@ class IndexControllerTest extends AbstractTest
     {
         $jsonString = '[["Michal","00000000","Kirova str."]]';
 
-        $storage = new CsvFileStorage();
-        $storage->setOptions(['file' => 'tests/data/test.csv']);
+        $storage = new CsvFileStorage(['file' => 'tests/data/test.csv']);
         $model = new IndexModel($storage);
-
-        /* @var $controller IndexController|\PHPUnit_Framework_MockObject_MockObject */
-        $controller = $this->getMockBuilder(IndexController::class)
-            ->setMethods(['getModel'])
-            ->getMock();
-        $controller->method('getModel')
-            ->will($this->returnValue($model));
+        $controller = new IndexController($model);
 
         $view = $controller->getList();
         $result = $view->__toString();
@@ -108,16 +89,9 @@ class IndexControllerTest extends AbstractTest
      */
     public function testGet($jsonString, $id)
     {
-        $storage = new CsvFileStorage();
-        $storage->setOptions(['file' => 'tests/data/test.csv']);
+        $storage = new CsvFileStorage(['file' => 'tests/data/test.csv']);
         $model = new IndexModel($storage);
-
-        /* @var $controller IndexController|\PHPUnit_Framework_MockObject_MockObject */
-        $controller = $this->getMockBuilder(IndexController::class)
-            ->setMethods(['getModel'])
-            ->getMock();
-        $controller->method('getModel')
-            ->will($this->returnValue($model));
+        $controller = new IndexController($model);
 
         $view = $controller->get($id);
         $result = $view->__toString();
@@ -129,16 +103,9 @@ class IndexControllerTest extends AbstractTest
      */
     public function testDelete()
     {
-        $storage = new CsvFileStorage();
-        $storage->setOptions(['file' => 'tests/data/test.csv']);
+        $storage = new CsvFileStorage(['file' => 'tests/data/test.csv']);
         $model = new IndexModel($storage);
-
-        /* @var $controller IndexController|\PHPUnit_Framework_MockObject_MockObject */
-        $controller = $this->getMockBuilder(IndexController::class)
-            ->setMethods(['getModel'])
-            ->getMock();
-        $controller->method('getModel')
-            ->will($this->returnValue($model));
+        $controller = new IndexController($model);
 
         $view = $controller->delete(1);
         $result = $view->__toString();

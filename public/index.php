@@ -11,4 +11,4 @@ $app = new \Example\Core\Application();
 
 $app->route(null, '/', 'Example\Controller\IndexController');
 
-$app->run();
+$app->run('config/config.php');

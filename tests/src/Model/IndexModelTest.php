@@ -9,7 +9,7 @@ class IndexModelTest extends \PHPUnit_Framework_TestCase
 {
     public function testSetStorage()
     {
-        $storage = new CsvFileStorage();
+        $storage = new CsvFileStorage(['file' => '']);
         $model = new IndexModel($storage);
         $model->setStorage($storage);
         $return = $model->getStorage();

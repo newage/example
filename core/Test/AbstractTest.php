@@ -6,6 +6,7 @@ class AbstractTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Call protected/private method
+     *
      * @param $class
      * @param $name
      * @return \ReflectionMethod
@@ -16,5 +17,20 @@ class AbstractTest extends \PHPUnit_Framework_TestCase
         $method = $class->getMethod($name);
         $method->setAccessible(true);
         return $method;
+    }
+
+    /**
+     * Call protected/private property
+     *
+     * @param $class
+     * @param $name
+     * @return \ReflectionProperty
+     */
+    protected static function getProperty($class, $name)
+    {
+        $class = new \ReflectionClass($class);
+        $property = $class->getProperty($name);
+        $property->setAccessible(true);
+        return $property;
     }
 }
