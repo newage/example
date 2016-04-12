@@ -34,3 +34,11 @@ A row number 3 update
 A row number 3 delete
 
     DELETE: /3
+
+##Important
+
+This code a made from scratch for test task. This code can't show my refactoring steps.
+Therefore I am making a code for this task in a new repository.
+I am adding a description about mine refactoring steps every commits.
+I planned to finish it in 1-2 days.
+[New repository](https://github.com/newage/extend-example).
