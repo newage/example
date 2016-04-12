@@ -38,7 +38,7 @@ class IndexController extends AbstractRestController
      */
     public function get($id)
     {
-        $variables = $this->getModel()->get($id);
+        $variables = $this->getModel()->get((int)$id);
         return new JsonView($variables);
     }
 
@@ -63,7 +63,7 @@ class IndexController extends AbstractRestController
      */
     public function update($id, array $data)
     {
-        $result = $this->getModel()->update($id, $data);
+        $result = $this->getModel()->update((int)$id, $data);
         return new JsonView(['result' => $result]);
     }
 
@@ -75,7 +75,7 @@ class IndexController extends AbstractRestController
      */
     public function delete($id)
     {
-        $result = $this->getModel()->delete($id);
+        $result = $this->getModel()->delete((int)$id);
         return new JsonView(['result' => $result]);
     }
 
